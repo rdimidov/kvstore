@@ -7,6 +7,12 @@ import (
 	"go.uber.org/zap"
 )
 
+type repository interface {
+	Set(ctx context.Context, key domain.Key, value domain.Value) error
+	Get(ctx context.Context, key domain.Key) (*domain.Entry, error)
+	Delete(ctx context.Context, key domain.Key) error
+}
+
 // Compute defines application-level operations and coordinates between
 // the domain logic and the data persistence layer.
 type Compute struct {

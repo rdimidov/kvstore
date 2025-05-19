@@ -13,6 +13,16 @@ const (
 	delCommand = "DEL"
 )
 
+// Expected number of arguments for commands
+const (
+	minArgsLen      = 2
+	getDelArgsLen   = 2
+	setArgsLen      = 3
+	commandNameIdx  = 0
+	commandKeyIdx   = 1
+	commandValueIdx = 2
+)
+
 // Command represents a parsed command structure extracted from a raw input line.
 // Value is only set for SET commands.
 type Command struct {
@@ -28,27 +38,27 @@ type Parser struct{}
 // Supported commands are: GET <key>, SET <key> <value>, DEL <key>.
 func (Parser) Parse(raw string) (*Command, error) {
 	tokens := strings.Fields(raw)
-	if len(tokens) < 2 {
+	if len(tokens) < minArgsLen {
 		return nil, ErrInvalidCmd
 	}
 
-	cmd := strings.ToUpper(tokens[0])
-	key, err := domain.NewKey(tokens[1])
+	cmd := strings.ToUpper(tokens[commandNameIdx])
+	key, err := domain.NewKey(tokens[commandKeyIdx])
 	if err != nil {
 		return nil, err
 	}
 
 	switch cmd {
 	case getCommand, delCommand:
-		if len(tokens) != 2 {
+		if len(tokens) != getDelArgsLen {
 			return nil, ErrInvalidCmd
 		}
 		return &Command{Cmd: cmd, Key: key}, nil
 	case setCommand:
-		if len(tokens) != 3 {
+		if len(tokens) != setArgsLen {
 			return nil, ErrInvalidCmd
 		}
-		value, err := domain.NewValue(tokens[2])
+		value, err := domain.NewValue(tokens[commandValueIdx])
 		if err != nil {
 			return nil, err
 		}

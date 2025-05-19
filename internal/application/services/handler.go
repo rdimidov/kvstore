@@ -9,6 +9,12 @@ import (
 
 var ErrInvalidCmd = errors.New("invalid command")
 
+type compute interface {
+	Get(ctx context.Context, key domain.Key) (*domain.Entry, error)
+	Set(ctx context.Context, key domain.Key, value domain.Value) error
+	Delete(ctx context.Context, key domain.Key) error
+}
+
 // StringHandler acts as an adapter between raw string commands and business logic
 type StringHandler struct {
 	compute compute
