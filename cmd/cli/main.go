@@ -19,9 +19,9 @@ func main() {
 
 	repo := storage.NewMemory()
 
-	compute := services.NewCompute(repo, config.Logger())
+	app := services.NewApplication(repo, config.Logger())
 
-	handler, err := services.NewStringHandler(compute)
+	handler, err := services.NewHandler(app)
 	if err != nil {
 		log.Fatal(err)
 	}

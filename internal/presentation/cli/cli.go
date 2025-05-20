@@ -8,11 +8,20 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/rdimidov/kvstore/internal/application/services"
+	"github.com/rdimidov/kvstore/internal/domain"
 )
 
 type contextKey string
 
 const txIDKey contextKey = "tx"
+
+type parser interface {
+	Parse(raw string) (*services.Command, error)
+}
+
+type handler interface {
+	Handle(ctx context.Context, cmd *services.Command) (*domain.Entry, error)
+}
 
 type Cli struct {
 	parser  parser

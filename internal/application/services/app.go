@@ -13,20 +13,20 @@ type repository interface {
 	Delete(ctx context.Context, key domain.Key) error
 }
 
-// Compute defines application-level operations and coordinates between
+// Application defines application-level operations and coordinates between
 // the domain logic and the data persistence layer.
-type Compute struct {
+type Application struct {
 	repo   repository
 	logger *zap.SugaredLogger
 }
 
-func NewCompute(repo repository, logger *zap.SugaredLogger) *Compute {
-	return &Compute{
+func NewApplication(repo repository, logger *zap.SugaredLogger) *Application {
+	return &Application{
 		repo:   repo,
 		logger: logger,
 	}
 }
-func (c *Compute) Set(ctx context.Context, key domain.Key, value domain.Value) error {
+func (c *Application) Set(ctx context.Context, key domain.Key, value domain.Value) error {
 	c.logger.Debugw("setting", "key", key, "value", value)
 	err := c.repo.Set(ctx, key, value)
 	if err != nil {
@@ -35,7 +35,7 @@ func (c *Compute) Set(ctx context.Context, key domain.Key, value domain.Value) e
 	return err
 }
 
-func (c *Compute) Get(ctx context.Context, key domain.Key) (*domain.Entry, error) {
+func (c *Application) Get(ctx context.Context, key domain.Key) (*domain.Entry, error) {
 	c.logger.Debugw("getting", "key", key)
 	entry, err := c.repo.Get(ctx, key)
 	if err != nil {
@@ -44,7 +44,7 @@ func (c *Compute) Get(ctx context.Context, key domain.Key) (*domain.Entry, error
 	return entry, err
 }
 
-func (c *Compute) Delete(ctx context.Context, key domain.Key) error {
+func (c *Application) Delete(ctx context.Context, key domain.Key) error {
 	c.logger.Debugw("deleting", "key", key)
 	err := c.repo.Delete(ctx, key)
 	if err != nil {
