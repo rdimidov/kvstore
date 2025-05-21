@@ -39,7 +39,7 @@ func main() {
 		log.Fatalf("failed to initialize logger: %v", err)
 	}
 	logger := loggerCore.Sugar()
-	defer logger.Sync()
+	defer logger.Sync() //nolint: all
 
 	// Create TCP client with timeout
 	client, err := tcpclient.New(*addrFlag,
