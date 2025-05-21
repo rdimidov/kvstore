@@ -3,70 +3,80 @@ package cli
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/google/uuid"
-	"github.com/rdimidov/kvstore/internal/application/services"
 	"github.com/rdimidov/kvstore/internal/domain"
+	"github.com/rdimidov/kvstore/internal/presentation/interpreter"
 )
 
+// contextKey is used for context values
+// txIDKey stores a transaction ID
 type contextKey string
 
-const txIDKey contextKey = "tx"
+const (
+	txIDKey   contextKey = "tx"
+	inputMark string     = "> "
+)
 
-type parser interface {
-	Parse(raw string) (*services.Command, error)
+// app abstracts business logic methods used by CLI
+type app interface {
+	Get(ctx context.Context, key domain.Key) (*domain.Entry, error)
+	Set(ctx context.Context, key domain.Key, value domain.Value) error
+	Delete(ctx context.Context, key domain.Key) error
 }
 
-type handler interface {
-	Handle(ctx context.Context, cmd *services.Command) (*domain.Entry, error)
+// interpr processes raw input and executes commands
+type interpr interface {
+	Execute(ctx context.Context, raw string) (*domain.Entry, error)
 }
 
+// Cli runs the command loop
 type Cli struct {
-	parser  parser
-	handler handler
+	interpreter interpr
 }
 
-func NewCli(h handler, p parser) *Cli {
-	if p == nil {
-		p = services.Parser{} // JIT DI
+// NewCli returns a CLI bound to the given app
+func NewCli(app app) (*Cli, error) {
+	if app == nil {
+		return nil, errors.New("app is nil")
 	}
-	return &Cli{
-		parser:  p,
-		handler: h,
+	interp, err := interpreter.New(app)
+	if err != nil {
+		return nil, err
 	}
+	return &Cli{interpreter: interp}, nil
 }
 
+// Run reads stdin, executes commands, and prints results
 func (c *Cli) Run(ctx context.Context) error {
-	reader := bufio.NewScanner(os.Stdin)
-	fmt.Print("> ")
+	scanner := bufio.NewScanner(os.Stdin)
+	c.prompt()
 
-	for reader.Scan() {
-		input := reader.Text()
-
+	for scanner.Scan() {
+		input := scanner.Text()
 		if input == "" {
-			fmt.Print("> ")
+			c.prompt()
 			continue
 		}
 
-		// Create a new context with unique transaction ID
-		txCtx := context.WithValue(ctx, txIDKey, uuid.NewString())
+		ctx = context.WithValue(ctx, txIDKey, uuid.NewString())
+		entry, err := c.interpreter.Execute(ctx, input)
 
-		cmd, err := c.parser.Parse(input)
-		if err != nil {
-			fmt.Println("Parse error:", err)
-			fmt.Print("> ")
-			continue
-		}
-
-		entry, err := c.handler.Handle(txCtx, cmd)
-		if err != nil {
+		switch {
+		case err != nil:
 			fmt.Println("Error:", err)
-		} else if entry != nil {
-			fmt.Printf("%s = %s\n", entry.Key, entry.Value)
+		case entry != nil:
+			fmt.Println(entry.Value)
 		}
-		fmt.Print("> ")
+		c.prompt()
 	}
-	return reader.Err()
+	return scanner.Err()
+}
+
+// prompt displays the CLI prompt
+func (c *Cli) prompt() {
+	fmt.Print(inputMark)
 }

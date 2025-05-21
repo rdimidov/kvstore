@@ -28,7 +28,7 @@ func (m *Memory) Get(_ context.Context, key domain.Key) (*domain.Entry, error) {
 	return nil, domain.ErrKeyNotFound
 }
 
-func (m *Memory) Delete(ctx context.Context, key domain.Key) error {
+func (m *Memory) Delete(_ context.Context, key domain.Key) error {
 	delete(m.hm, key.String())
 	return nil
 }

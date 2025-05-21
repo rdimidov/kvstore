@@ -21,11 +21,10 @@ func main() {
 
 	app := services.NewApplication(repo, config.Logger())
 
-	handler, err := services.NewHandler(app)
+	repl, err := cli.NewCli(app)
 	if err != nil {
 		log.Fatal(err)
 	}
-	repl := cli.NewCli(handler, nil)
 
 	if err := repl.Run(context.TODO()); err != nil {
 		log.Fatal(err)

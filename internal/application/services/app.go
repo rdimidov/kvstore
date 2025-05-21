@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/rdimidov/kvstore/internal/domain"
 	"go.uber.org/zap"
@@ -38,7 +39,7 @@ func (c *Application) Set(ctx context.Context, key domain.Key, value domain.Valu
 func (c *Application) Get(ctx context.Context, key domain.Key) (*domain.Entry, error) {
 	c.logger.Debugw("getting", "key", key)
 	entry, err := c.repo.Get(ctx, key)
-	if err != nil {
+	if err != nil && !errors.Is(err, domain.ErrKeyNotFound) {
 		c.logger.Errorf("failed to get key: %s, err: %v", key, err)
 	}
 	return entry, err
@@ -47,7 +48,7 @@ func (c *Application) Get(ctx context.Context, key domain.Key) (*domain.Entry, e
 func (c *Application) Delete(ctx context.Context, key domain.Key) error {
 	c.logger.Debugw("deleting", "key", key)
 	err := c.repo.Delete(ctx, key)
-	if err != nil {
+	if err != nil && !errors.Is(err, domain.ErrKeyNotFound) {
 		c.logger.Errorf("failed to delete key: %s, err: %v", key, err)
 	}
 	return err
