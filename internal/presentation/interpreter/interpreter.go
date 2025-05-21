@@ -94,3 +94,30 @@ func (i *Interpreter) Execute(ctx context.Context, raw string) (*domain.Entry, e
 
 	return nil, ErrInvalidCmd
 }
+
+type RawInterpreter struct {
+	Interpreter
+}
+
+func NewRaw(app application) (*RawInterpreter, error) {
+	if app == nil {
+		return nil, errors.New("application is nil")
+	}
+	return &RawInterpreter{
+		Interpreter: Interpreter{app: app},
+	}, nil
+}
+
+func (r *RawInterpreter) Execute(ctx context.Context, data []byte) []byte {
+	raw := strings.TrimSpace(string(data))
+	result, err := r.Interpreter.Execute(ctx, raw)
+	if err != nil {
+		return []byte("ERR " + err.Error() + "\n")
+	}
+
+	if result == nil {
+		return []byte("OK\n")
+	}
+
+	return []byte(result.Value.String() + "\n")
+}

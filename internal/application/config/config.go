@@ -1,41 +1,62 @@
 package config
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	defaultServerAddr = "0.0.0.0:8080"
+	defaultLogLevel   = "info"
+)
+
 type Config struct {
+	Network struct {
+		Address        string        `mapstructure:"address"`
+		MaxMessageSize int           `mapstructure:"max_message_size"`
+		ReadTimeout    time.Duration `mapstructure:"read_timeout"`
+		WriteTimeout   time.Duration `mapstructure:"write_timeout"`
+	} `mapstructure:"network"`
+	Logging struct {
+		Level string `mapstructure:"level"`
+	} `mapstructure:"logging"`
 	logger *zap.SugaredLogger
 }
 
 func LoadConfig() (*Config, error) {
 	v := viper.New()
 
-	v.AutomaticEnv()
-	v.SetDefault("DEBUG", true)
-	v.SetDefault("LOG_LEVEL", "DEBUG")
+	v.SetDefault("network.address", defaultServerAddr)
+	v.SetDefault("logging.level", defaultLogLevel)
 
-	debug := v.GetBool("DEBUG")
-	logLevelStr := v.GetString("LOG_LEVEL")
+	v.SetConfigName("config")
+	v.SetConfigType("yaml")
+	v.AddConfigPath(".")
 
-	config := &Config{}
+	// Try to read config file
+	if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("error reading config file: %w", err)
+	}
 
-	if err := config.setLogger(debug, logLevelStr); err != nil {
+	var cfg Config
+	if err := v.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unable to decode config: %w", err)
+	}
+	if err := cfg.setLogger(); err != nil {
 		return nil, err
 	}
 
-	return config, nil
+	return &cfg, nil
 }
 
-func (c *Config) setLogger(debug bool, logLevel string) error {
+func (c *Config) setLogger() error {
 	cfg := zap.NewProductionConfig()
-	if !debug {
-		cfg = zap.NewProductionConfig()
-	}
 
-	level, err := zapcore.ParseLevel(logLevel)
+	level, err := zapcore.ParseLevel(c.Logging.Level)
 	if err != nil {
 		return err
 	}
@@ -51,9 +72,10 @@ func (c *Config) setLogger(debug bool, logLevel string) error {
 	return nil
 }
 
-func (c *Config) Logger() *zap.SugaredLogger {
-	return c.logger
-}
 func (c *Config) Cleanup() {
 	_ = c.logger.Sync()
+}
+
+func (c *Config) Logger() *zap.SugaredLogger {
+	return c.logger
 }
