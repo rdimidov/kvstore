@@ -1,0 +1,7 @@
+network:
+  address: 0.0.0.0:8080
+  max_message_size: 4096
+  read_timeout: 5m
+  write_timeout: 5m
+logging:
+  level: info
