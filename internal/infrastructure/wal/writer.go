@@ -89,7 +89,6 @@ func (w *rotatingWalWriter) Write(batch []entry) {
 	}
 
 	n, err := w.curFile.Write(buf.Bytes())
-	fmt.Println(w.curFile, n, err)
 	if err == nil && n < buf.Len() {
 		err = errors.New("short write to WAL")
 	}
