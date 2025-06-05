@@ -39,8 +39,8 @@ func (_m *mockrepository) EXPECT() *mockrepository_Expecter {
 }
 
 // Delete provides a mock function for the type mockrepository
-func (_mock *mockrepository) Delete(ctx context.Context, key domain.Key) error {
-	ret := _mock.Called(ctx, key)
+func (_mock *mockrepository) Delete(context1 context.Context, key domain.Key) error {
+	ret := _mock.Called(context1, key)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
@@ -48,7 +48,7 @@ func (_mock *mockrepository) Delete(ctx context.Context, key domain.Key) error {
 
 	var r0 error
 	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.Key) error); ok {
-		r0 = returnFunc(ctx, key)
+		r0 = returnFunc(context1, key)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,13 +61,13 @@ type mockrepository_Delete_Call struct {
 }
 
 // Delete is a helper method to define mock.On call
-//   - ctx
+//   - context1
 //   - key
-func (_e *mockrepository_Expecter) Delete(ctx interface{}, key interface{}) *mockrepository_Delete_Call {
-	return &mockrepository_Delete_Call{Call: _e.mock.On("Delete", ctx, key)}
+func (_e *mockrepository_Expecter) Delete(context1 interface{}, key interface{}) *mockrepository_Delete_Call {
+	return &mockrepository_Delete_Call{Call: _e.mock.On("Delete", context1, key)}
 }
 
-func (_c *mockrepository_Delete_Call) Run(run func(ctx context.Context, key domain.Key)) *mockrepository_Delete_Call {
+func (_c *mockrepository_Delete_Call) Run(run func(context1 context.Context, key domain.Key)) *mockrepository_Delete_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(domain.Key))
 	})
@@ -79,14 +79,14 @@ func (_c *mockrepository_Delete_Call) Return(err error) *mockrepository_Delete_C
 	return _c
 }
 
-func (_c *mockrepository_Delete_Call) RunAndReturn(run func(ctx context.Context, key domain.Key) error) *mockrepository_Delete_Call {
+func (_c *mockrepository_Delete_Call) RunAndReturn(run func(context1 context.Context, key domain.Key) error) *mockrepository_Delete_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function for the type mockrepository
-func (_mock *mockrepository) Get(ctx context.Context, key domain.Key) (*domain.Entry, error) {
-	ret := _mock.Called(ctx, key)
+func (_mock *mockrepository) Get(context1 context.Context, key domain.Key) (*domain.Entry, error) {
+	ret := _mock.Called(context1, key)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
@@ -95,17 +95,17 @@ func (_mock *mockrepository) Get(ctx context.Context, key domain.Key) (*domain.E
 	var r0 *domain.Entry
 	var r1 error
 	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.Key) (*domain.Entry, error)); ok {
-		return returnFunc(ctx, key)
+		return returnFunc(context1, key)
 	}
 	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.Key) *domain.Entry); ok {
-		r0 = returnFunc(ctx, key)
+		r0 = returnFunc(context1, key)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*domain.Entry)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, domain.Key) error); ok {
-		r1 = returnFunc(ctx, key)
+		r1 = returnFunc(context1, key)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -118,13 +118,13 @@ type mockrepository_Get_Call struct {
 }
 
 // Get is a helper method to define mock.On call
-//   - ctx
+//   - context1
 //   - key
-func (_e *mockrepository_Expecter) Get(ctx interface{}, key interface{}) *mockrepository_Get_Call {
-	return &mockrepository_Get_Call{Call: _e.mock.On("Get", ctx, key)}
+func (_e *mockrepository_Expecter) Get(context1 interface{}, key interface{}) *mockrepository_Get_Call {
+	return &mockrepository_Get_Call{Call: _e.mock.On("Get", context1, key)}
 }
 
-func (_c *mockrepository_Get_Call) Run(run func(ctx context.Context, key domain.Key)) *mockrepository_Get_Call {
+func (_c *mockrepository_Get_Call) Run(run func(context1 context.Context, key domain.Key)) *mockrepository_Get_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(domain.Key))
 	})
@@ -136,14 +136,14 @@ func (_c *mockrepository_Get_Call) Return(entry *domain.Entry, err error) *mockr
 	return _c
 }
 
-func (_c *mockrepository_Get_Call) RunAndReturn(run func(ctx context.Context, key domain.Key) (*domain.Entry, error)) *mockrepository_Get_Call {
+func (_c *mockrepository_Get_Call) RunAndReturn(run func(context1 context.Context, key domain.Key) (*domain.Entry, error)) *mockrepository_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Set provides a mock function for the type mockrepository
-func (_mock *mockrepository) Set(ctx context.Context, key domain.Key, value domain.Value) error {
-	ret := _mock.Called(ctx, key, value)
+func (_mock *mockrepository) Set(context1 context.Context, key domain.Key, value domain.Value) error {
+	ret := _mock.Called(context1, key, value)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Set")
@@ -151,7 +151,7 @@ func (_mock *mockrepository) Set(ctx context.Context, key domain.Key, value doma
 
 	var r0 error
 	if returnFunc, ok := ret.Get(0).(func(context.Context, domain.Key, domain.Value) error); ok {
-		r0 = returnFunc(ctx, key, value)
+		r0 = returnFunc(context1, key, value)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -164,14 +164,14 @@ type mockrepository_Set_Call struct {
 }
 
 // Set is a helper method to define mock.On call
-//   - ctx
+//   - context1
 //   - key
 //   - value
-func (_e *mockrepository_Expecter) Set(ctx interface{}, key interface{}, value interface{}) *mockrepository_Set_Call {
-	return &mockrepository_Set_Call{Call: _e.mock.On("Set", ctx, key, value)}
+func (_e *mockrepository_Expecter) Set(context1 interface{}, key interface{}, value interface{}) *mockrepository_Set_Call {
+	return &mockrepository_Set_Call{Call: _e.mock.On("Set", context1, key, value)}
 }
 
-func (_c *mockrepository_Set_Call) Run(run func(ctx context.Context, key domain.Key, value domain.Value)) *mockrepository_Set_Call {
+func (_c *mockrepository_Set_Call) Run(run func(context1 context.Context, key domain.Key, value domain.Value)) *mockrepository_Set_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(domain.Key), args[2].(domain.Value))
 	})
@@ -183,7 +183,170 @@ func (_c *mockrepository_Set_Call) Return(err error) *mockrepository_Set_Call {
 	return _c
 }
 
-func (_c *mockrepository_Set_Call) RunAndReturn(run func(ctx context.Context, key domain.Key, value domain.Value) error) *mockrepository_Set_Call {
+func (_c *mockrepository_Set_Call) RunAndReturn(run func(context1 context.Context, key domain.Key, value domain.Value) error) *mockrepository_Set_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// NewMockWALogger creates a new instance of MockWALogger. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// The first argument is typically a *testing.T value.
+func NewMockWALogger(t interface {
+	mock.TestingT
+	Cleanup(func())
+}) *MockWALogger {
+	mock := &MockWALogger{}
+	mock.Mock.Test(t)
+
+	t.Cleanup(func() { mock.AssertExpectations(t) })
+
+	return mock
+}
+
+// MockWALogger is an autogenerated mock type for the WALogger type
+type MockWALogger struct {
+	mock.Mock
+}
+
+type MockWALogger_Expecter struct {
+	mock *mock.Mock
+}
+
+func (_m *MockWALogger) EXPECT() *MockWALogger_Expecter {
+	return &MockWALogger_Expecter{mock: &_m.Mock}
+}
+
+// Recover provides a mock function for the type MockWALogger
+func (_mock *MockWALogger) Recover(ctx context.Context) error {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Recover")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) error); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockWALogger_Recover_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Recover'
+type MockWALogger_Recover_Call struct {
+	*mock.Call
+}
+
+// Recover is a helper method to define mock.On call
+//   - ctx
+func (_e *MockWALogger_Expecter) Recover(ctx interface{}) *MockWALogger_Recover_Call {
+	return &MockWALogger_Recover_Call{Call: _e.mock.On("Recover", ctx)}
+}
+
+func (_c *MockWALogger_Recover_Call) Run(run func(ctx context.Context)) *MockWALogger_Recover_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockWALogger_Recover_Call) Return(err error) *MockWALogger_Recover_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockWALogger_Recover_Call) RunAndReturn(run func(ctx context.Context) error) *MockWALogger_Recover_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// WriteDel provides a mock function for the type MockWALogger
+func (_mock *MockWALogger) WriteDel(key domain.Key) error {
+	ret := _mock.Called(key)
+
+	if len(ret) == 0 {
+		panic("no return value specified for WriteDel")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(domain.Key) error); ok {
+		r0 = returnFunc(key)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockWALogger_WriteDel_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WriteDel'
+type MockWALogger_WriteDel_Call struct {
+	*mock.Call
+}
+
+// WriteDel is a helper method to define mock.On call
+//   - key
+func (_e *MockWALogger_Expecter) WriteDel(key interface{}) *MockWALogger_WriteDel_Call {
+	return &MockWALogger_WriteDel_Call{Call: _e.mock.On("WriteDel", key)}
+}
+
+func (_c *MockWALogger_WriteDel_Call) Run(run func(key domain.Key)) *MockWALogger_WriteDel_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(domain.Key))
+	})
+	return _c
+}
+
+func (_c *MockWALogger_WriteDel_Call) Return(err error) *MockWALogger_WriteDel_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockWALogger_WriteDel_Call) RunAndReturn(run func(key domain.Key) error) *MockWALogger_WriteDel_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// WriteSet provides a mock function for the type MockWALogger
+func (_mock *MockWALogger) WriteSet(key domain.Key, value domain.Value) error {
+	ret := _mock.Called(key, value)
+
+	if len(ret) == 0 {
+		panic("no return value specified for WriteSet")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(domain.Key, domain.Value) error); ok {
+		r0 = returnFunc(key, value)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockWALogger_WriteSet_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WriteSet'
+type MockWALogger_WriteSet_Call struct {
+	*mock.Call
+}
+
+// WriteSet is a helper method to define mock.On call
+//   - key
+//   - value
+func (_e *MockWALogger_Expecter) WriteSet(key interface{}, value interface{}) *MockWALogger_WriteSet_Call {
+	return &MockWALogger_WriteSet_Call{Call: _e.mock.On("WriteSet", key, value)}
+}
+
+func (_c *MockWALogger_WriteSet_Call) Run(run func(key domain.Key, value domain.Value)) *MockWALogger_WriteSet_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(domain.Key), args[1].(domain.Value))
+	})
+	return _c
+}
+
+func (_c *MockWALogger_WriteSet_Call) Return(err error) *MockWALogger_WriteSet_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockWALogger_WriteSet_Call) RunAndReturn(run func(key domain.Key, value domain.Value) error) *MockWALogger_WriteSet_Call {
 	_c.Call.Return(run)
 	return _c
 }

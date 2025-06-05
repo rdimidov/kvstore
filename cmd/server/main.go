@@ -8,7 +8,9 @@ import (
 
 	"github.com/rdimidov/kvstore/internal/application/config"
 	"github.com/rdimidov/kvstore/internal/application/services"
+
 	"github.com/rdimidov/kvstore/internal/infrastructure/storage"
+	"github.com/rdimidov/kvstore/internal/infrastructure/wal"
 	"github.com/rdimidov/kvstore/internal/presentation/interpreter"
 	"github.com/rdimidov/kvstore/internal/presentation/tcpserver"
 	"go.uber.org/zap"
@@ -23,7 +25,7 @@ func main() {
 
 	logger := cfg.Logger()
 
-	handler := mustInitHandler(logger)
+	handler := mustInitHandler(ctx, cfg, logger)
 
 	server := mustInitServer(cfg, handler)
 	server.Start(ctx)
@@ -38,9 +40,29 @@ func mustLoadConfig() *config.Config {
 	return cfg
 }
 
-func mustInitHandler(logger *zap.SugaredLogger) *interpreter.RawInterpreter {
+func mustInitHandler(ctx context.Context, cfg *config.Config, logger *zap.SugaredLogger) *interpreter.RawInterpreter {
 	repo := storage.NewMemory()
-	app := services.NewApplication(repo, logger)
+
+	var w services.WALogger
+	if cfg.WAL.Enabled {
+
+		walHandler, err := interpreter.New(repo)
+		if err != nil {
+			logger.Fatalw("failed to initialize interpreter", "error", err)
+		}
+
+		w, err = wal.New(ctx, cfg, walHandler)
+		if err != nil {
+			logger.Fatalw("failed to initialize wall", "error", err)
+		}
+	} else {
+		w = &wal.Noop{}
+	}
+
+	app, err := services.NewApplication(ctx, repo, logger, w)
+	if err != nil {
+		logger.Fatalw("failed to initialize app", "error", err)
+	}
 
 	handler, err := interpreter.NewRaw(app)
 	if err != nil {

@@ -24,6 +24,14 @@ type Config struct {
 	Logging struct {
 		Level string `mapstructure:"level"`
 	} `mapstructure:"logging"`
+	WAL struct {
+		Enabled      bool          `mapstructure:"enabled"`
+		BatchSize    int           `mapstructure:"batchSize"`
+		FlushTimeout time.Duration `mapstructure:"flushTimeout"`
+		Dir          string        `mapstructure:"directory"`
+		MSS          int           `mapstructure:"maxSegmentSizeMB"`
+	} `mapstructure:"wal"`
+
 	logger *zap.SugaredLogger
 }
 
@@ -76,6 +84,10 @@ func (c *Config) Cleanup() {
 	_ = c.logger.Sync()
 }
 
-func (c *Config) Logger() *zap.SugaredLogger {
-	return c.logger
-}
+func (c *Config) Logger() *zap.SugaredLogger { return c.logger }
+
+func (c *Config) WALEnabled() bool                    { return c.WAL.Enabled }
+func (c *Config) WALBatchSize() int                   { return c.WAL.BatchSize }
+func (c *Config) WALBatchFlushTimeout() time.Duration { return c.WAL.FlushTimeout }
+func (c *Config) WALDirName() string                  { return c.WAL.Dir }
+func (c *Config) WALMaxSegmentSize() int              { return c.WAL.MSS }

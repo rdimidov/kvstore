@@ -18,14 +18,14 @@ func TestInterpreter_Execute(t *testing.T) {
 	tests := []struct {
 		name      string
 		input     string
-		setup     func(app *mockapplication)
+		setup     func(app *mockhandler)
 		wantEntry *domain.Entry
 		wantErr   error
 	}{
 		{
 			name:  "GET success",
 			input: "GET foo",
-			setup: func(app *mockapplication) {
+			setup: func(app *mockhandler) {
 				app.On("Get", mock.Anything, key).Return(entry, nil)
 			},
 			wantEntry: entry,
@@ -34,19 +34,19 @@ func TestInterpreter_Execute(t *testing.T) {
 		{
 			name:    "GET invalid args",
 			input:   "GET",
-			setup:   func(app *mockapplication) {},
+			setup:   func(app *mockhandler) {},
 			wantErr: ErrInvalidCmd,
 		},
 		{
 			name:    "GET more invalid args",
 			input:   "GET foo foo",
-			setup:   func(app *mockapplication) {},
+			setup:   func(app *mockhandler) {},
 			wantErr: ErrInvalidCmd,
 		},
 		{
 			name:  "DEL success",
 			input: "DEL foo",
-			setup: func(app *mockapplication) {
+			setup: func(app *mockhandler) {
 				app.On("Delete", mock.Anything, key).Return(nil)
 			},
 			wantEntry: nil,
@@ -55,13 +55,13 @@ func TestInterpreter_Execute(t *testing.T) {
 		{
 			name:    "DEL invalid args",
 			input:   "DEL bar foo",
-			setup:   func(app *mockapplication) {},
+			setup:   func(app *mockhandler) {},
 			wantErr: ErrInvalidCmd,
 		},
 		{
 			name:  "SET success",
 			input: "SET foo bar",
-			setup: func(app *mockapplication) {
+			setup: func(app *mockhandler) {
 				app.On("Set", mock.Anything, key, val).Return(nil)
 			},
 			wantEntry: nil,
@@ -70,13 +70,13 @@ func TestInterpreter_Execute(t *testing.T) {
 		{
 			name:    "SET invalid args",
 			input:   "SET foo",
-			setup:   func(app *mockapplication) {},
+			setup:   func(app *mockhandler) {},
 			wantErr: ErrInvalidCmd,
 		},
 		{
 			name:    "Unknown command",
 			input:   "FOO foo",
-			setup:   func(app *mockapplication) {},
+			setup:   func(app *mockhandler) {},
 			wantErr: ErrInvalidCmd,
 		},
 	}
@@ -84,7 +84,7 @@ func TestInterpreter_Execute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// create mock
-			appMock := newMockapplication(t)
+			appMock := newMockhandler(t)
 			tt.setup(appMock)
 
 			interp, err := New(appMock)
