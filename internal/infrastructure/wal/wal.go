@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/rdimidov/kvstore/internal/domain"
-	"github.com/rdimidov/kvstore/pkg/concurrency"
 )
 
 const (
@@ -81,7 +80,7 @@ func New(ctx context.Context, config config, interpreter interpreter) (*WAL, err
 	wal := &WAL{
 		batchLimit:  batch,
 		timeout:     defaultFlushTimeout,
-		readyCh:     make(chan []entry),
+		readyCh:     make(chan []entry, 1),
 		writer:      writer,
 		reader:      reader,
 		interpreter: interpreter,
@@ -99,12 +98,13 @@ func (w *WAL) start(ctx context.Context) {
 			select {
 			case <-ctx.Done():
 				w.dumpBatch()
+				return
 
 			case <-ticker.C:
 				w.dumpBatch()
 
 			case batch := <-w.readyCh:
-				w.writer.Write(batch)
+				go w.writer.Write(batch)
 				ticker.Reset(w.timeout)
 
 			}
@@ -122,7 +122,7 @@ func (w *WAL) WriteDel(key domain.Key) error {
 	return fut.Get()
 }
 
-func (w *WAL) processInput(input string) concurrency.FutureError {
+func (w *WAL) processInput(input string) FutureError {
 	entry := newEntry(input)
 
 	w.mu.Lock()
@@ -145,7 +145,9 @@ func (w *WAL) dumpBatch() {
 	w.batch = nil
 	w.mu.Unlock()
 
-	w.writer.Write(batch)
+	if len(batch) != 0 {
+		w.writer.Write(batch)
+	}
 }
 
 func (w *WAL) Recover(ctx context.Context) error {

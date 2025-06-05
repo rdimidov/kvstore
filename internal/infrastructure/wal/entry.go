@@ -4,9 +4,12 @@ import (
 	"github.com/rdimidov/kvstore/pkg/concurrency"
 )
 
+type FutureError = concurrency.Future[error]
+type PromiseError = concurrency.Promise[error]
+
 type entry struct {
 	data    string
-	promise *concurrency.PromiseError
+	promise *PromiseError
 }
 
 func newEntry(s string) entry {
@@ -16,7 +19,7 @@ func newEntry(s string) entry {
 	}
 }
 
-func (e *entry) FutureResponse() concurrency.FutureError {
+func (e *entry) FutureResponse() FutureError {
 	return e.promise.GetFuture()
 }
 

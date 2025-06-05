@@ -2,8 +2,6 @@ package concurrency
 
 import "sync"
 
-type PromiseError = Promise[error]
-
 type Promise[T any] struct {
 	result chan T
 

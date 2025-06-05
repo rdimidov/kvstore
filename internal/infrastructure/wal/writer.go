@@ -16,12 +16,13 @@ const baseFileName = "wal"
 // rotatingWalWriter implements walWriter and can "fold" logs into segments:
 // as soon as one file grows to maxBytes, it is closed and a new one is started.
 type rotatingWalWriter struct {
-	mu       sync.Mutex
 	dir      string // directory where to put segments
 	baseName string // segment file  prefix
 	maxBytes int    // max segment size
-	curFile  *os.File
-	curSize  int // curr segment size
+
+	mu      sync.Mutex
+	curFile *os.File
+	curSize int // curr segment size
 }
 
 func newRotatingWalWriter(dir string, maxBytes int) (*rotatingWalWriter, error) {
@@ -70,14 +71,14 @@ func (w *rotatingWalWriter) rotate() error {
 
 // Write writes a batch of entries to the current WAL segment.
 func (w *rotatingWalWriter) Write(batch []entry) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
 	var buf bytes.Buffer
 	for _, e := range batch {
 		buf.WriteString(e.data)
 		buf.WriteByte('\n')
 	}
+
+	w.mu.Lock()
+	defer w.mu.Unlock()
 
 	if w.curSize+buf.Len() > w.maxBytes {
 		if err := w.rotate(); err != nil {

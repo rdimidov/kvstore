@@ -1,7 +1,5 @@
 package concurrency
 
-type FutureError = Future[error]
-
 type Future[T any] struct {
 	result <-chan T
 }
