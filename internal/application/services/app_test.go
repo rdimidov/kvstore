@@ -47,8 +47,10 @@ func TestCompute_Set(t *testing.T) {
 			mockRepo := newMockrepository(t)
 			tt.mockSetup(mockRepo)
 
-			app := NewApplication(mockRepo, zap.NewNop().Sugar())
-			err := app.Set(context.Background(), tt.args.key, tt.args.value)
+			app, err := NewApplication(context.Background(), mockRepo, zap.NewNop().Sugar(), nil)
+			assert.NoError(t, err)
+
+			err = app.Set(context.Background(), tt.args.key, tt.args.value)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -95,7 +97,9 @@ func TestCompute_Get(t *testing.T) {
 			mockRepo := newMockrepository(t)
 			tt.mockSetup(mockRepo)
 
-			app := NewApplication(mockRepo, zap.NewNop().Sugar())
+			app, err := NewApplication(context.Background(), mockRepo, zap.NewNop().Sugar(), nil)
+			assert.NoError(t, err)
+
 			entry, err := app.Get(context.Background(), tt.args.key)
 			if tt.expectError {
 				assert.Error(t, err)
@@ -142,9 +146,10 @@ func TestCompute_Delete(t *testing.T) {
 			mockRepo := newMockrepository(t)
 			tt.mockSetup(mockRepo)
 
-			app := NewApplication(mockRepo, zap.NewNop().Sugar())
+			app, err := NewApplication(context.Background(), mockRepo, zap.NewNop().Sugar(), nil)
+			assert.NoError(t, err)
 
-			err := app.Delete(context.Background(), tt.args.key)
+			err = app.Delete(context.Background(), tt.args.key)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

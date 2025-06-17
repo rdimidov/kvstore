@@ -5,3 +5,6 @@ network:
   write_timeout: 5m
 logging:
   level: info
+
+wal:
+  enabled: true

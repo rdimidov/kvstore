@@ -30,7 +30,7 @@ const (
 var ErrInvalidCmd = errors.New("invalid command")
 
 // application defines the set of operations supported by the business logic layer.
-type application interface {
+type handler interface {
 	Get(ctx context.Context, key domain.Key) (*domain.Entry, error)
 	Set(ctx context.Context, key domain.Key, value domain.Value) error
 	Delete(ctx context.Context, key domain.Key) error
@@ -38,16 +38,16 @@ type application interface {
 
 // Interpreter handles parsing raw input strings and executing corresponding application commands.
 type Interpreter struct {
-	app application
+	handler handler
 }
 
 // New creates a new Interpreter with the given application implementation.
 // Returns an error if the application is nil.
-func New(app application) (*Interpreter, error) {
-	if app == nil {
-		return nil, errors.New("application is nil")
+func New(handler handler) (*Interpreter, error) {
+	if handler == nil {
+		return nil, errors.New("handler is nil")
 	}
-	return &Interpreter{app: app}, nil
+	return &Interpreter{handler: handler}, nil
 }
 
 // Execute parses the raw input string and invokes the matching application method.
@@ -62,24 +62,23 @@ func (i *Interpreter) Execute(ctx context.Context, raw string) (*domain.Entry, e
 		return nil, ErrInvalidCmd
 	}
 
-	cmd := strings.ToUpper(tokens[commandNameIdx])
 	key, err := domain.NewKey(tokens[commandKeyIdx])
 	if err != nil {
 		return nil, err
 	}
 
-	switch cmd {
+	switch tokens[commandNameIdx] {
 	case getCommand:
 		if len(tokens) != getArgsLen {
 			return nil, ErrInvalidCmd
 		}
-		return i.app.Get(ctx, key)
+		return i.handler.Get(ctx, key)
 
 	case delCommand:
 		if len(tokens) != delArgsLen {
 			return nil, ErrInvalidCmd
 		}
-		return nil, i.app.Delete(ctx, key)
+		return nil, i.handler.Delete(ctx, key)
 
 	case setCommand:
 		if len(tokens) != setArgsLen {
@@ -89,7 +88,7 @@ func (i *Interpreter) Execute(ctx context.Context, raw string) (*domain.Entry, e
 		if err != nil {
 			return nil, err
 		}
-		return nil, i.app.Set(ctx, key, value)
+		return nil, i.handler.Set(ctx, key, value)
 	}
 
 	return nil, ErrInvalidCmd
@@ -99,12 +98,12 @@ type RawInterpreter struct {
 	Interpreter
 }
 
-func NewRaw(app application) (*RawInterpreter, error) {
-	if app == nil {
+func NewRaw(handler handler) (*RawInterpreter, error) {
+	if handler == nil {
 		return nil, errors.New("application is nil")
 	}
 	return &RawInterpreter{
-		Interpreter: Interpreter{app: app},
+		Interpreter: Interpreter{handler: handler},
 	}, nil
 }
 
